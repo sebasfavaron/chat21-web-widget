@@ -5,8 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 // firebase
-import * as firebase from 'firebase/app';
-import 'firebase/storage';
+// import * as firebase from 'firebase/app';
+// import 'firebase/storage';
 
 import { UploadModel } from '../../models/upload';
 import { environment } from '../../environments/environment';
@@ -100,14 +100,14 @@ export class UploadService {
     this.g.wdLog(['pushUpload::::::::::::: ', urlImagesNodeFirebase]);
 
     // Create a root reference
-    const storageRef = firebase.storage().ref();
+    // const storageRef = firebase.storage().ref();
 
     // Create a reference to 'mountains.jpg'
-    const mountainsRef = storageRef.child(urlImagesNodeFirebase);
+    // const mountainsRef = storageRef.child(urlImagesNodeFirebase);
 
     //  this.g.wdLog(["UploadService::pushUpload::mountainsRef", mountainsRef);
 
-    return mountainsRef.put(upload.file);
+    // return mountainsRef.put(upload.file);
     // .then(function(snapshot) {
     //    this.g.wdLog(['Uploaded a blob or file! ', snapshot.downloadURL);
     //   this.observable.next(snapshot.downloadURL);
@@ -123,10 +123,10 @@ export class UploadService {
 
     const next = function(snapshot) {
       // upload in progress
-      const snapshotRef = snapshot as firebase.storage.UploadTaskSnapshot;
-      const percent = snapshotRef.bytesTransferred / snapshotRef.totalBytes * 100;
-       this.g.wdLog(['snapshot::::::::::::: ', percent]);
-      upload.progress = percent;
+      // const snapshotRef = snapshot as firebase.storage.UploadTaskSnapshot;
+      // const percent = snapshotRef.bytesTransferred / snapshotRef.totalBytes * 100;
+      //  this.g.wdLog(['snapshot::::::::::::: ', percent]);
+      // upload.progress = percent;
     };
     // tslint:disable-next-line:no-shadowed-variable
     const error = function( error: any ) {
@@ -135,18 +135,18 @@ export class UploadService {
     };
     const complete = function() {
       // upload success
-      upload.url = uploadTask.snapshot.downloadURL;
+      // upload.url = uploadTask.snapshot.downloadURL;
       upload.name = upload.file.name;
       upload.progress = 100;
     };
 
 
-    const storageRef = firebase.storage().ref();
-    const uploadTask = storageRef.child(urlImagesNodeFirebase).put(upload.file);
+    // const storageRef = firebase.storage().ref();
+    // const uploadTask = storageRef.child(urlImagesNodeFirebase).put(upload.file);
 
-    // This is equivalent to the first example.
-    const subscribe = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED);
-    subscribe(next, error, complete);
+    // // This is equivalent to the first example.
+    // const subscribe = uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED);
+    // subscribe(next, error, complete);
   }
 
   // display(uidContact) {

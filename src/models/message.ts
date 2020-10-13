@@ -1,12 +1,12 @@
 // firebase
-import * as firebase from 'firebase/app';
-import 'firebase/database';
+// import * as firebase from 'firebase/app';
+// import 'firebase/database';
 
 export class MessageModel {
     public sender_urlImage: string;
     constructor(
         public uid: string,
-        public language: string,
+        // public language: string,
         public recipient: string,
         public recipient_fullname: string,
         public sender: string,
@@ -14,18 +14,17 @@ export class MessageModel {
         public status: string,
         public metadata: any,
         public text: any,
-        public timestamp: any,
-        public headerDate: string,
+        // public timestamp: any,
+        // public headerDate: string,
         public type: string,
         public attributes: any,
         public channel_type: string,
-        public projectid: string,
-        public emoticon?: boolean
+        public projectid: string
     ) { }
 
     asFirebaseMessage(): Object {
         const message = {
-            language: this.language,
+            // language: this.language,
             recipient: this.recipient,
             recipient_fullname: this.recipient_fullname,
             sender: this.sender,
@@ -33,7 +32,7 @@ export class MessageModel {
             status: this.status,
             metadata: this.metadata,
             text: this.text,
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            // timestamp: firebase.database.ServerValue.TIMESTAMP,
             // headerDate: this.headerDate,
             type: this.type,
             attributes: this.attributes,

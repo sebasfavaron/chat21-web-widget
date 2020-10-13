@@ -12,7 +12,7 @@ import { Globals } from './utils/globals';
 
 
 // import { AuthService } from './core/auth.service';
-import { AuthService } from './providers/auth.service';
+// import { AuthService } from './providers/auth.service';
 import { MessagingService } from './providers/messaging.service';
 import { ContactService } from './providers/contact.service';
 import { StorageService } from './providers/storage.service';
@@ -22,8 +22,8 @@ import { ChatPresenceHandlerService } from './providers/chat-presence-handler.se
 import { AgentAvailabilityService } from './providers/agent-availability.service';
 
 // firebase
-import * as firebase from 'firebase/app';
-import 'firebase/app';
+// import * as firebase from 'firebase/app';
+// import 'firebase/app';
 import { environment } from '../environments/environment';
 
 // utils
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         private ngZone: NgZone,
         public g: Globals,
         public translatorService: TranslatorService,
-        public authService: AuthService,
+        // public authService: AuthService,
         public messagingService: MessagingService,
         public contactService: ContactService,
         public chatPresenceHandlerService: ChatPresenceHandlerService,
@@ -108,13 +108,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         // firebase.initializeApp(environment.firebase);  // here shows the error
         // that.g.wdLog(['appConfigService.getConfig().firebase', appConfigService.getConfig().firebase);
 
-        if (!appConfigService.getConfig().firebase || appConfigService.getConfig().firebase.apiKey === 'CHANGEIT') {
-            // tslint:disable-next-line:max-line-length
-            throw new Error('firebase config is not defined. Please create your widget-config.json. See the Chat21-Web_widget Installation Page');
-        }
+        // if (!appConfigService.getConfig().firebase || appConfigService.getConfig().firebase.apiKey === 'CHANGEIT') {
+        //     // tslint:disable-next-line:max-line-length
+        //     throw new Error('firebase config is not defined. Please create your widget-config.json. See the Chat21-Web_widget Installation Page');
+        // }
         // console.log('---> remoteTranslationsUrl: ', appConfigService.getConfig().remoteTranslationsUrl);
 
-        firebase.initializeApp(appConfigService.getConfig().firebase);  // here shows the error
+        // firebase.initializeApp(appConfigService.getConfig().firebase);  // here shows the error
         this.obsEndRenderMessage = new BehaviorSubject(null);
     }
 
@@ -132,13 +132,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             const subChangedConversation = this.conversationsService.obsChangeConversation.subscribe((conversation) => {
                 that.ngZone.run(() => {
                     if ( that.g.isOpen === false && conversation) {
+                        // that.g.isOpenNewMessage = true;
                         that.g.setParameter('displayEyeCatcherCard', 'none');
                         that.triggerOnChangedConversation(conversation);
                         that.g.wdLog([' obsChangeConversation ::: ' + conversation]);
                     }
                 });
             });
-            this.authService.initialize();
+            // this.authService.initialize();
             this.subscriptions.push(subChangedConversation);
         });
     }
@@ -162,105 +163,122 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
          * 400: errore nel login
          * 410: errore login (firebase)
          */
-        const obsLoggedUser = this.authService.obsLoggedUser.subscribe((resp) => {
-            this.g.wdLog(['obsLoggedUser ------------> ', resp]);
-            // if autostart == false don't autenticate!
-            // after called signInWithCustomToken need set autostart == true
-            // this.ngZone.run(() => {
-                // const tiledeskTokenTEMP = that.storageService.getItemWithoutProjectId('tiledeskToken');
+        // const obsLoggedUser = this.authService.obsLoggedUser.subscribe((resp) => {
+        //     this.g.wdLog(['obsLoggedUser ------------> ', resp]);
+        //     // if autostart == false don't autenticate!
+        //     // after called signInWithCustomToken need set autostart == true
+        //     // this.ngZone.run(() => {
+        //         // const tiledeskTokenTEMP = that.storageService.getItemWithoutProjectId('tiledeskToken');
 
-                const tiledeskTokenTEMP = that.storageService.getItem('tiledeskToken');
-                if (tiledeskTokenTEMP && tiledeskTokenTEMP !== undefined) {
-                    that.g.tiledeskToken = tiledeskTokenTEMP;
-                }
-                const firebaseTokenTEMP = that.storageService.getItemWithoutProjectId('firebaseToken');
-                if (firebaseTokenTEMP && firebaseTokenTEMP !== undefined) {
-                    that.g.firebaseToken = firebaseTokenTEMP;
-                }
-                const autoStart = this.g.autoStart;
-                that.g.wdLog(['tiledeskToken ------------> ', that.g.tiledeskToken]);
-                if (resp === -2) {
-                    that.stateLoggedUser = resp;
-                    /** ho fatto un reinit */
-                    that.g.wdLog(['sono nel caso reinit -2']);
-                    that.g.setParameter('isLogged', false);
-                    that.hideAllWidget();
-                    // that.g.setParameter('isShown', false, true);
-                    that.storageService.removeItem('tiledeskToken');
-                    that.g.isLogout = true;
-                    // that.triggerOnAuthStateChanged(resp);
-                    if (autoStart !== false) {
-                        that.setAuthentication();
-                        that.initAll();
-                    }
-                } else if (resp === -1) {
-                    that.stateLoggedUser = resp;
-                    /** ho effettuato il logout: nascondo il widget */
-                    that.g.wdLog(['sono nel caso logout -1']);
-                    // that.g.wdLog(['obsLoggedUser', obsLoggedUser);
-                    // that.g.wdLog(['this.subscriptions', that.subscriptions);
-                    that.g.setParameter('isLogged', false);
-                    that.hideAllWidget();
-                    // that.g.setParameter('isShown', false, true);
-                    that.storageService.removeItem('tiledeskToken');
-                    that.g.isLogout = true;
-                    that.triggerOnAuthStateChanged(that.stateLoggedUser);
-                } else if (resp === 0) {
-                    that.stateLoggedUser = resp;
-                    /** non sono loggato */
-                    that.g.wdLog(['sono nel caso in cui non sono loggato 0']);
-                    that.g.wdLog(['NO CURRENT USER AUTENTICATE: ']);
-                    that.g.setParameter('isLogged', false);
-                    that.hideAllWidget();
-                    // that.g.setParameter('isShown', false, true);
-                    that.triggerOnAuthStateChanged(that.stateLoggedUser);
-                    if (autoStart !== false) {
-                        that.setAuthentication();
-                    }
-                } else if (resp === 200) {
-                    if (that.stateLoggedUser === 0) {
-                        that.stateLoggedUser = 201;
-                    } else {
-                        that.stateLoggedUser = resp;
-                    }
-                    /** sono loggato */
-                    const user = that.authService.getCurrentUser();
-                    that.g.wdLog(['sono nel caso in cui sono loggato']);
-                    that.g.wdLog([' anonymousAuthenticationInNewProject']);
-                    // that.authService.resigninAnonymousAuthentication();
-                    // confronto id utente tiledesk con id utente di firebase
-                    // senderid deve essere == id di firebase
-                    that.g.setParameter('senderId', user.uid);
-                    that.g.setParameter('isLogged', true);
-                    that.g.setParameter('attributes', that.setAttributesFromStorageService());
-                    /* faccio scattare il trigger del login solo una volta */
-                    // if (that.isBeingAuthenticated) {
-                    //     that.triggerOnLoggedIn();
-                    //     that.isBeingAuthenticated = false;
-                    // }
-                    that.triggerOnAuthStateChanged(that.stateLoggedUser);
-                    that.startUI();
-                    that.g.wdLog([' 1 - IMPOSTO STATO CONNESSO UTENTE ', autoStart]);
-                    that.chatPresenceHandlerService.setupMyPresence(user.uid);
-                    if (autoStart !== false) {
-                        that.showAllWidget();
-                        // that.g.setParameter('isShown', true, true);
-                    }
-                } else if (resp >= 400) {
-                    that.g.wdLog([' ERRORE LOGIN ']);
-                    // that.storageService.removeItem('tiledeskToken');
-                    return;
-                } else {
-                    that.g.wdLog([' INIT obsLoggedUser']);
-                    return;
-                }
+        //         const tiledeskTokenTEMP = that.storageService.getItem('tiledeskToken');
+        //         if (tiledeskTokenTEMP && tiledeskTokenTEMP !== undefined) {
+        //             that.g.tiledeskToken = tiledeskTokenTEMP;
+        //         }
+        //         const firebaseTokenTEMP = that.storageService.getItemWithoutProjectId('firebaseToken');
+        //         if (firebaseTokenTEMP && firebaseTokenTEMP !== undefined) {
+        //             that.g.firebaseToken = firebaseTokenTEMP;
+        //         }
+        //         const autoStart = this.g.autoStart;
+        //         that.g.wdLog(['tiledeskToken ------------> ', that.g.tiledeskToken]);
+        //         if (resp === -2) {
+        //             that.stateLoggedUser = resp;
+        //             /** ho fatto un reinit */
+        //             that.g.wdLog(['sono nel caso reinit -2']);
+        //             that.g.setParameter('isLogged', false);
+        //             that.hideAllWidget();
+        //             // that.g.setParameter('isShown', false, true);
+        //             that.storageService.removeItem('tiledeskToken');
+        //             that.g.isLogout = true;
+        //             // that.triggerOnAuthStateChanged(resp);
+        //             if (autoStart !== false) {
+        //                 that.setAuthentication();
+        //                 that.initAll();
+        //             }
+        //         } else if (resp === -1) {
+        //             that.stateLoggedUser = resp;
+        //             /** ho effettuato il logout: nascondo il widget */
+        //             that.g.wdLog(['sono nel caso logout -1']);
+        //             // that.g.wdLog(['obsLoggedUser', obsLoggedUser);
+        //             // that.g.wdLog(['this.subscriptions', that.subscriptions);
+        //             that.g.setParameter('isLogged', false);
+        //             that.hideAllWidget();
+        //             // that.g.setParameter('isShown', false, true);
+        //             that.storageService.removeItem('tiledeskToken');
+        //             that.g.isLogout = true;
+        //             that.triggerOnAuthStateChanged(that.stateLoggedUser);
+        //         } else if (resp === 0) {
+        //             that.stateLoggedUser = resp;
+        //             /** non sono loggato */
+        //             that.g.wdLog(['sono nel caso in cui non sono loggato 0']);
+        //             that.g.wdLog(['NO CURRENT USER AUTENTICATE: ']);
+        //             that.g.setParameter('isLogged', false);
+        //             that.hideAllWidget();
+        //             // that.g.setParameter('isShown', false, true);
+        //             that.triggerOnAuthStateChanged(that.stateLoggedUser);
+        //             if (autoStart !== false) {
+        //                 that.setAuthentication();
+        //             }
+        //         } else if (resp === 200) {
+        //             if (that.stateLoggedUser === 0) {
+        //                 that.stateLoggedUser = 201;
+        //             } else {
+        //                 that.stateLoggedUser = resp;
+        //             }
+        //             /** sono loggato */
+        //             const user = that.authService.getCurrentUser();
+        //             that.g.wdLog(['sono nel caso in cui sono loggato']);
+        //             that.g.wdLog([' anonymousAuthenticationInNewProject']);
+        //             // that.authService.resigninAnonymousAuthentication();
+        //             // confronto id utente tiledesk con id utente di firebase
+        //             // senderid deve essere == id di firebase
+        //             that.g.setParameter('senderId', '1'/* user.uid */);
+        //             that.g.setParameter('isLogged', true);
+        //             that.g.setParameter('attributes', that.setAttributesFromStorageService());
+        //             /* faccio scattare il trigger del login solo una volta */
+        //             // if (that.isBeingAuthenticated) {
+        //             //     that.triggerOnLoggedIn();
+        //             //     that.isBeingAuthenticated = false;
+        //             // }
+        //             that.triggerOnAuthStateChanged(that.stateLoggedUser);
+        //             that.startUI();
+        //             that.g.wdLog([' 1 - IMPOSTO STATO CONNESSO UTENTE ', autoStart]);
+        //             that.chatPresenceHandlerService.setupMyPresence('1'/* user.uid */);
+        //             if (autoStart !== false) {
+        //                 that.showAllWidget();
+        //                 // that.g.setParameter('isShown', true, true);
+        //             }
+        //         } else if (resp >= 400) {
+        //             that.g.wdLog([' ERRORE LOGIN ']);
+        //             // that.storageService.removeItem('tiledeskToken');
+        //             return;
+        //         } else {
+        //             that.g.wdLog([' INIT obsLoggedUser']);
+        //             return;
+        //         }
 
-                // that.triggerOnAuthStateChanged();
-            // });
-        });
+        //         // that.triggerOnAuthStateChanged();
+        //     // });
+        // });
         // that.g.wdLog(['onAuthStateChanged ------------> ']);
-        this.subscriptions.push(obsLoggedUser);
+        // this.subscriptions.push(obsLoggedUser);
         // this.authService.onAuthStateChanged();
+        const autoStart = this.g.autoStart;
+        that.g.setParameter('senderId', '1'/* user.uid */);
+        that.g.setParameter('isLogged', true);
+        that.g.setParameter('attributes', that.setAttributesFromStorageService());
+        /* faccio scattare il trigger del login solo una volta */
+        // if (that.isBeingAuthenticated) {
+        //     that.triggerOnLoggedIn();
+        //     that.isBeingAuthenticated = false;
+        // }
+        that.triggerOnAuthStateChanged(that.stateLoggedUser);
+        that.startUI();
+        that.g.wdLog([' 1 - IMPOSTO STATO CONNESSO UTENTE ', autoStart]);
+        that.chatPresenceHandlerService.setupMyPresence('1'/* user.uid */);
+        if (autoStart !== false) {
+            that.showAllWidget();
+            // that.g.setParameter('isShown', true, true);
+        }
     }
     // ========= end:: SUBSCRIPTIONS ============//
 
@@ -377,9 +395,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     removeFirebasewebsocketFromLocalStorage() {
         this.g.wdLog([' ---------------- A1 ---------------- ']);
         // Related to https://github.com/firebase/angularfire/issues/970
-        if (supports_html5_storage()) {
-            localStorage.removeItem('firebase:previous_websocket_failure');
-        }
+        // if (supports_html5_storage()) {
+        //     localStorage.removeItem('firebase:previous_websocket_failure');
+        // }
     }
 
     /** setAttributesFromStorageService
@@ -585,7 +603,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         if (userEmail && userPassword) {
              this.g.wdLog([' ---------------- 10 ---------------- ']);
             // se esistono email e psw faccio un'autenticazione firebase con email
-            this.authService.authenticateFirebaseWithEmailAndPassword(userEmail, userPassword);
+            // this.authService.authenticateFirebaseWithEmailAndPassword(userEmail, userPassword);
         } else if (userId) {
             // SE PASSO LO USERID NON EFFETTUO NESSUNA AUTENTICAZIONE
             this.g.wdLog([' ---------------- 11 ---------------- ']);
@@ -603,25 +621,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // !!! DA TESTARE NON FUNZIONA !!! //
             this.g.wdLog([' ---------------- 12 ---------------- ']);
             this.g.wdLog(['this.g.userToken:: ', userToken]);
-            this.authService.authenticateFirebaseCustomToken(userToken);
-        } else if (this.authService.getCurrentUser() && tiledeskToken) {
+            // this.authService.authenticateFirebaseCustomToken(userToken);
+        } else if (/* this.authService.getCurrentUser() && */ tiledeskToken) {
             //  SONO GIA' AUTENTICATO
             this.g.wdLog([' ---------------- 13 ---------------- ']);
-            const currentUser = this.authService.getCurrentUser();
+            const currentUser = 1;//this.authService.getCurrentUser();
             this.g.wdLog([' ---------------- 13 ---------------- ']);
-            this.g.senderId = currentUser.uid;
-            this.g.setParameter('senderId', currentUser.uid);
+            this.g.senderId = '1'/* currentUser.uid */;
+            this.g.setParameter('senderId', 1/* currentUser.uid */);
             this.g.setParameter('isLogged', true);
             this.g.setParameter('attributes', this.setAttributesFromStorageService());
             // this.startNwConversation();
             this.startUI();
             this.g.wdLog([' 13 - IMPOSTO STATO CONNESSO UTENTE ']);
-            this.chatPresenceHandlerService.setupMyPresence(currentUser.uid);
+            this.chatPresenceHandlerService.setupMyPresence('1'/* currentUser.uid */);
         } else {
             //  AUTENTICAZIONE ANONIMA
             this.g.wdLog([' ---------------- 14 ---------------- ']);
             this.g.wdLog([' authenticateFirebaseAnonymously']);
-            this.authService.anonymousAuthentication();
+            // this.authService.anonymousAuthentication();
             // this.g.wdLog([' authenticateFirebaseAnonymously']);
             // this.authService.authenticateFirebaseAnonymously();
         }
@@ -643,12 +661,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.g.setParameter('isOpenPrechatForm', false);
         this.isOpenSelectionDepartment = false;
         this.isOpenAllConversation = false;
-        const conversationActive: ConversationModel = JSON.parse(this.storageService.getItem('activeConversation'));
-        this.g.wdLog([' ============ idConversation ===============', conversationActive ]);
-        if (conversationActive) {
-            // this.g.recipientId = conversationActive.recipient;
-            this.returnSelectedConversation(conversationActive);
-        } else if (this.g.startFromHome) {
+        if (this.g.startFromHome) {
             this.isOpenConversation = false;
             this.g.setParameter('isOpenPrechatForm', false);
             this.isOpenSelectionDepartment = false;
@@ -971,31 +984,31 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private signInWithCustomToken(token: string) {
         const that = this;
         try {
-            this.authService.signInWithCustomToken(token)
-            .subscribe(resp => {
-                that.g.wdLog(['signInWithCustomToken token ', resp]);
-                 if (resp.success === true && resp.token) {
-                     if (resp.user) {
-                        const fullName = resp.user.firstname + ' ' + resp.user.lastname;
-                        that.g.setParameter('userFullname', fullName);
-                        that.g.setParameter('userEmail', resp.user.email);
-                        that.g.setParameter('userId', resp.user._id);
-                        that.g.setAttributeParameter('userEmail', resp.user.email);
-                        that.g.setAttributeParameter('userFullname', fullName);
-                     }
-                    that.authService.createFirebaseToken(resp.token)
-                    .subscribe(firebaseToken => {
-                        that.g.firebaseToken = firebaseToken;
-                        that.authService.authenticateFirebaseCustomToken(firebaseToken);
-                    }, error => {
-                        console.error('Error creating firebase token: ', error);
-                        that.signOut(-1);
-                    });
-                 }
-            }, error => {
-                console.error('Error creating firebase token: ', error);
-                that.signOut(-1);
-            });
+            // this.authService.signInWithCustomToken(token)
+            // .subscribe(resp => {
+            //     that.g.wdLog(['signInWithCustomToken token ', resp]);
+            //      if (resp.success === true && resp.token) {
+            //          if (resp.user) {
+            //             const fullName = resp.user.firstname + ' ' + resp.user.lastname;
+            //             that.g.setParameter('userFullname', fullName);
+            //             that.g.setParameter('userEmail', resp.user.email);
+            //             that.g.setParameter('userId', resp.user._id);
+            //             that.g.setAttributeParameter('userEmail', resp.user.email);
+            //             that.g.setAttributeParameter('userFullname', fullName);
+            //          }
+            //         that.authService.createFirebaseToken(resp.token)
+            //         .subscribe(firebaseToken => {
+            //             that.g.firebaseToken = firebaseToken;
+            //             that.authService.authenticateFirebaseCustomToken(firebaseToken);
+            //         }, error => {
+            //             console.error('Error creating firebase token: ', error);
+            //             that.signOut(-1);
+            //         });
+            //      }
+            // }, error => {
+            //     console.error('Error creating firebase token: ', error);
+            //     that.signOut(-1);
+            // });
         } catch (error) {
             this.g.wdLog(['> Error :' + error]);
         }
@@ -1006,42 +1019,42 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.g.wdLog(['signInWithCustomToken token ', token]);
         const that = this;
         const projectid = this.g.projectid;
-        this.authService.createFirebaseToken(token, projectid)
-            .subscribe(response => {
-                that.authService.decode(token, projectid)
-                    .subscribe(resDec => {
-                        const attributes = that.g.attributes;
-                        const firebaseToken = response;
-                        this.g.wdLog(['firebaseToken', firebaseToken]);
-                        this.g.wdLog(['resDec', resDec.decoded]);
-                        that.g.setParameter('signInWithCustomToken', true);
-                        that.g.setParameter('userEmail', resDec.decoded.email);
-                        that.g.setParameter('userFullname', resDec.decoded.name);
-                        that.g.setParameter('userToken', firebaseToken);
-                        that.g.setParameter('signInWithCustomToken', true);
-                        that.g.setParameter('signInWithCustomToken', true);
-                        that.g.setParameter('signInWithCustomToken', true);
-                        that.authService.authenticateFirebaseCustomToken(firebaseToken);
-                        that.g.setAttributeParameter('userEmail', resDec.decoded.email);
-                        that.g.setAttributeParameter('userFullname', resDec.decoded.name);
-                        // attributes.userEmail = resDec.decoded.email;
-                        // attributes.userFullname = resDec.decoded.name;
-                        // that.g.setParameter('attributes', attributes);
-                        // attributes = that.setAttributesFromStorageService(); ?????????????+
-                        // ????????????????????
-                    }, error => {
-                        console.error('Error decoding token: ', error);
-                       // that.g.wdLog(['call signout');
-                       that.signOut(-1);
-                    });
-                    // , () => {
-                    //     that.g.wdLog(['!!! NEW REQUESTS HISTORY - DOWNLOAD REQUESTS AS CSV * COMPLETE *');
-                    // });
-            }, error => {
-                console.error('Error creating firebase token: ', error);
-                // that.g.wdLog(['call signout');
-                that.signOut(-1);
-            });
+        // this.authService.createFirebaseToken(token, projectid)
+        //     .subscribe(response => {
+        //         that.authService.decode(token, projectid)
+        //             .subscribe(resDec => {
+        //                 const attributes = that.g.attributes;
+        //                 const firebaseToken = response;
+        //                 this.g.wdLog(['firebaseToken', firebaseToken]);
+        //                 this.g.wdLog(['resDec', resDec.decoded]);
+        //                 that.g.setParameter('signInWithCustomToken', true);
+        //                 that.g.setParameter('userEmail', resDec.decoded.email);
+        //                 that.g.setParameter('userFullname', resDec.decoded.name);
+        //                 that.g.setParameter('userToken', firebaseToken);
+        //                 that.g.setParameter('signInWithCustomToken', true);
+        //                 that.g.setParameter('signInWithCustomToken', true);
+        //                 that.g.setParameter('signInWithCustomToken', true);
+        //                 that.authService.authenticateFirebaseCustomToken(firebaseToken);
+        //                 that.g.setAttributeParameter('userEmail', resDec.decoded.email);
+        //                 that.g.setAttributeParameter('userFullname', resDec.decoded.name);
+        //                 // attributes.userEmail = resDec.decoded.email;
+        //                 // attributes.userFullname = resDec.decoded.name;
+        //                 // that.g.setParameter('attributes', attributes);
+        //                 // attributes = that.setAttributesFromStorageService(); ?????????????+
+        //                 // ????????????????????
+        //             }, error => {
+        //                 console.error('Error decoding token: ', error);
+        //                // that.g.wdLog(['call signout');
+        //                that.signOut(-1);
+        //             });
+        //             // , () => {
+        //             //     that.g.wdLog(['!!! NEW REQUESTS HISTORY - DOWNLOAD REQUESTS AS CSV * COMPLETE *');
+        //             // });
+        //     }, error => {
+        //         console.error('Error creating firebase token: ', error);
+        //         // that.g.wdLog(['call signout');
+        //         that.signOut(-1);
+        //     });
             // , () => {
                 // that.g.wdLog(['!!! NEW REQUESTS HISTORY - DOWNLOAD REQUESTS AS CSV * COMPLETE *');
             // });
@@ -1050,7 +1063,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     /** */
     private signInAnonymous() {
         this.g.wdLog(['signInAnonymous']);
-        this.authService.anonymousAuthentication();
+        // this.authService.anonymousAuthentication();
         // this.authService.authenticateFirebaseAnonymously();
     }
 
@@ -1128,12 +1141,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
      * 3 - reinit widget
     */
     private reInit() {
-        if (!firebase.auth().currentUser) {
-            this.g.wdLog(['reInit ma NON SONO LOGGATO!']);
-        } else {
-            this.authService.signOut(-2);
+        // if (false/* !firebase.auth().currentUser */) {
+        //     this.g.wdLog(['reInit ma NON SONO LOGGATO!']);
+        // } else {
+            // this.authService.signOut(-2);
             this.storageService.clear();
-        }
+        // }
         const divWidgetRoot = this.g.windowContext.document.getElementsByTagName('tiledeskwidget-root')[0];
         const divWidgetContainer = this.g.windowContext.document.getElementById('tiledesk-container');
         divWidgetContainer.remove();
@@ -1145,24 +1158,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private reInit_old() {
         // this.isOpenHome = false;
         this.storageService.clear();
-        let currentUser = this.authService.getCurrentUser();
-        this.authService.reloadCurrentUser()
-        .then(() => {
-            // location.reload();
-            currentUser = this.authService.getCurrentUser();
-            // alert(currentUser.uid);
-            this.initAll();
-            /** sono loggato */
-            this.g.wdLog(['reInit_old USER AUTENTICATE: ', currentUser.uid]);
-            this.g.setParameter('senderId', currentUser.uid);
-            this.g.setParameter('isLogged', true);
-            this.g.setParameter('attributes', this.setAttributesFromStorageService());
-            this.g.wdLog([' this.g.senderId', currentUser.uid]);
-            // this.startNwConversation();
-            this.startUI();
-            this.g.wdLog([' 1 - IMPOSTO STATO CONNESSO UTENTE ']);
-            this.chatPresenceHandlerService.setupMyPresence(currentUser.uid);
-        });
+        // let currentUser = this.authService.getCurrentUser();
+        // this.authService.reloadCurrentUser()
+        // .then(() => {
+        //     // location.reload();
+        //     currentUser = this.authService.getCurrentUser();
+        //     // alert(currentUser.uid);
+        //     this.initAll();
+        //     /** sono loggato */
+        //     this.g.wdLog(['reInit_old USER AUTENTICATE: ', currentUser.uid]);
+        //     this.g.setParameter('senderId', currentUser.uid);
+        //     this.g.setParameter('isLogged', true);
+        //     this.g.setParameter('attributes', this.setAttributesFromStorageService());
+        //     this.g.wdLog([' this.g.senderId', currentUser.uid]);
+        //     // this.startNwConversation();
+        //     this.startUI();
+        //     this.g.wdLog([' 1 - IMPOSTO STATO CONNESSO UTENTE ']);
+        //     this.chatPresenceHandlerService.setupMyPresence(currentUser.uid);
+        // });
 
     }
 
@@ -1219,7 +1232,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.g.setIsOpen(false);
             this.storageService.clear();
             this.chatPresenceHandlerService.goOffline();
-            this.authService.signOut(cod);
+            // this.authService.signOut(cod);
         }
         // this.storageService.removeItem('attributes');
     }
@@ -1271,13 +1284,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.g.wdLog([' ---------------- triggerNewConversationEvent ---------------- ', default_settings]);
         // tslint:disable-next-line:max-line-length
         const onNewConversation = new CustomEvent('onNewConversation', { detail: { global: this.g, default_settings: default_settings, newConvId: newConvId, appConfigs: appConfigs } });
+        const onLoggedIn = new CustomEvent('onLoggedIn', { detail: {user_id: this.g.senderId, global: this.g, default_settings: default_settings, appConfigs: appConfigs }});
+        const onAuthStateChanged = new CustomEvent('onAuthStateChanged', { detail: {event: event, isLogged: this.g.isLogged, user_id: this.g.senderId, global: this.g, default_settings: default_settings, appConfigs: appConfigs }});
         const windowContext = this.g.windowContext;
-        if (windowContext.tiledesk && windowContext.tiledesk.tiledeskroot) {
-            windowContext.tiledesk.tiledeskroot.dispatchEvent(onNewConversation);
-            this.g.windowContext = windowContext;
-        } else {
-            this.el.nativeElement.dispatchEvent(onNewConversation);
-        }
+        var tiledeskroot = document.getElementsByTagName('tiledeskwidget-root')[0];
+        // tiledeskroot.dispatchEvent(onAuthStateChanged);
+        tiledeskroot.dispatchEvent(onNewConversation);
+        this.g.windowContext = windowContext;
+        // if (windowContext.tiledesk && windowContext.tiledesk.tiledeskroot) {
+        //     windowContext.tiledesk.tiledeskroot.dispatchEvent(onNewConversation);
+        //     this.g.windowContext = windowContext;
+        // } else {
+        //     this.el.nativeElement.dispatchEvent(onNewConversation);
+        // }
 
     }
 

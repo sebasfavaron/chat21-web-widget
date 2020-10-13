@@ -12,17 +12,17 @@ export const environment = {
   remoteConfig: true,
   remoteConfigUrl: '/widget-config.json',
   remoteTranslationsUrl: 'http://localhost:3000/',
-  loadRemoteTranslations: true,
+  loadRemoteTranslations: false,
   firebase: {
-    apiKey: 'CHANGEIT',
-    authDomain: 'CHANGEIT',
-    databaseURL: 'CHANGEIT',
-    projectId: 'CHANGEIT',
-    storageBucket: 'CHANGEIT',
-    messagingSenderId: 'CHANGEIT'
+    apiKey: 'AIzaSyAltK3Fi8F9TtTGmGdrghcrqsKIOBJBUdo',
+    authDomain: 'balanz-chat-21-ionic.firebaseapp.com',
+    databaseURL: 'https://balanz-chat-21-ionic.firebaseio.com',
+    projectId: 'balanz-chat-21-ionic',
+    storageBucket: 'balanz-chat-21-ionic.appspot.com',
+    messagingSenderId: '283623487573'
   },
   apiUrl: 'http://localhost:3000/',
   tenant: 'tilechat',
-  defaultLang : 'en',
-  shemaVersion : '1'
+  defaultLang: 'en',
+  shemaVersion: '1'
 };

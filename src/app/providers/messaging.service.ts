@@ -6,8 +6,8 @@ import {SecurityContext} from '@angular/core';
 // import {NgDompurifySanitizer} from '@tinkoff/ng-dompurify';
 
 // firebase
-import * as firebase from 'firebase/app';
-import 'firebase/database';
+// import * as firebase from 'firebase/app';
+// import 'firebase/database';
 
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -20,8 +20,7 @@ import { StarRatingWidgetService } from '../components/star-rating-widget/star-r
 // tslint:disable-next-line:max-line-length
 import { IMG_PROFILE_BOT, IMG_PROFILE_DEFAULT, MSG_STATUS_SENT_SERVER, MSG_STATUS_RECEIVED, TYPE_MSG_TEXT, UID_SUPPORT_GROUP_MESSAGES, CHANNEL_TYPE_GROUP } from '../utils/constants';
 // utils
-// tslint:disable-next-line:max-line-length
-import { isEmoji, getUrlImgProfile, getImageUrlThumb, searchIndexInArrayForUid, setHeaderDate, replaceBr, convertMessage } from '../utils/utils';
+import { getUrlImgProfile, getImageUrlThumb, searchIndexInArrayForUid, setHeaderDate, replaceBr, convertMessage } from '../utils/utils';
 import { Globals } from '../utils/globals';
 import { StorageService } from '../providers/storage.service';
 import { AppConfigService } from '../providers/app-config.service';
@@ -133,8 +132,8 @@ export class MessagingService {
    */
   checkMessages(conversationWith) {
     const urlMessages = this.urlMessages + conversationWith;
-    const firebaseMessages = firebase.database().ref(urlMessages);
-    this.messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(1000);
+    // const firebaseMessages = firebase.database().ref(urlMessages);
+    // this.messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(1000);
     this.subscriptionsToMessages();
   }
 
@@ -147,138 +146,236 @@ export class MessagingService {
   subscriptionsToMessages() {
     const that = this;
     //// SUBSCRIBE REMOVED ////
-    this.messagesRef.on('child_removed', function (childSnapshot) {
-      const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
-      if (index > -1) {
-        that.messages.splice(index, 1);
-      }
-    });
+    // this.messagesRef.on('child_removed', function (childSnapshot) {
+    //   const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
+    //   if (index > -1) {
+    //     that.messages.splice(index, 1);
+    //   }
+    // });
     //// SUBSCRIBE ADDED ////
-    this.messagesRef.on('child_added', function (childSnapshot) {
-      const message = childSnapshot.val();
-      // console.log('1 passo -----', message);
-      that.g.wdLog(['A: child_added *****', childSnapshot.key, JSON.stringify(message)]);
-      const video_pattern = /^(tdvideo:.*)/mg;
-      const key = 'tdvideo:';
-      // const messageText = that.splitMessageForKey(key, video_pattern, message.text);
-      // const messageText = message.text;
-      let messageText = that.convertMessage(message.text);
-      messageText = replaceBr(messageText); // message['text']);
+    // this.messagesRef.on('child_added', function (childSnapshot) {
+    //   const message = childSnapshot.val();
+    //   // console.log('1 passo -----', message);
+    //   that.g.wdLog(['A: child_added *****', childSnapshot.key, JSON.stringify(message)]);
+    //   const video_pattern = /^(tdvideo:.*)/mg;
+    //   const key = 'tdvideo:';
+    //   // const messageText = that.splitMessageForKey(key, video_pattern, message.text);
+    //   // const messageText = message.text;
+    //   let messageText = that.convertMessage(message.text);
+    //   messageText = replaceBr(messageText); // message['text']);
 
-      if (that.checkMessage(message)) {
-        // imposto il giorno del messaggio
-        // const timestamp =  firebase.database.ServerValue.TIMESTAMP;
-        const dateSendingMessage = setHeaderDate(message['timestamp']);
-        // SPONZIELLO PATCH // forces update of userFullname from remote command
-        // console.log("Sponziello patch")
-        // console.log("saved_conversations_attributes_STRING: " , saved_conversations_attributes_STRING)
+    //   if (that.checkMessage(message)) {
+    //     // imposto il giorno del messaggio
+    //     // const timestamp =  firebase.database.ServerValue.TIMESTAMP;
+    //     const dateSendingMessage = setHeaderDate(message['timestamp']);
+    //     // SPONZIELLO PATCH // forces update of userFullname from remote command
+    //     // console.log("Sponziello patch")
+    //     // console.log("saved_conversations_attributes_STRING: " , saved_conversations_attributes_STRING)
 
-        const saved_conversations_attributes_STRING = that.storageService.getItem('attributes');
-        let saved_conversations_attributes = {};
-        if (saved_conversations_attributes_STRING != null) {
-          saved_conversations_attributes = JSON.parse(saved_conversations_attributes_STRING);
-        }
-        // console.log("saved_conversations_attributes: " , saved_conversations_attributes)
-        if (message['attributes'] && message['attributes']['updateUserFullname']) {
-          // console.log("message->updateUserFullname! " , message['attributes']['updateUserFullname'])
-          const userFullname = message['attributes']['updateUserFullname'];
-          saved_conversations_attributes['userFullname'] = userFullname;
-          // console.log("new saved_conversations_attributes: " , saved_conversations_attributes)
-          that.g.userFullname = userFullname;
-          that.storageService.setItem('attributes', JSON.stringify(saved_conversations_attributes));
-        }
-        if (message['attributes'] && message['attributes']['updateUserEmail']) {
-          const userEmail = message['attributes']['updateUserEmail'];
-          saved_conversations_attributes['userEmail'] = userEmail;
-          that.g.userEmail = userEmail;
-          that.storageService.setItem('attributes', JSON.stringify(saved_conversations_attributes));
-        }
+    //     const saved_conversations_attributes_STRING = that.storageService.getItem('attributes');
+    //     let saved_conversations_attributes = {};
+    //     if (saved_conversations_attributes_STRING != null) {
+    //       saved_conversations_attributes = JSON.parse(saved_conversations_attributes_STRING);
+    //     }
+    //     // console.log("saved_conversations_attributes: " , saved_conversations_attributes)
+    //     if (message['attributes'] && message['attributes']['updateUserFullname']) {
+    //       // console.log("message->updateUserFullname! " , message['attributes']['updateUserFullname'])
+    //       const userFullname = message['attributes']['updateUserFullname'];
+    //       saved_conversations_attributes['userFullname'] = userFullname;
+    //       // console.log("new saved_conversations_attributes: " , saved_conversations_attributes)
+    //       that.g.userFullname = userFullname;
+    //       that.storageService.setItem('attributes', JSON.stringify(saved_conversations_attributes));
+    //     }
+    //     if (message['attributes'] && message['attributes']['updateUserEmail']) {
+    //       const userEmail = message['attributes']['updateUserEmail'];
+    //       saved_conversations_attributes['userEmail'] = userEmail;
+    //       that.g.userEmail = userEmail;
+    //       that.storageService.setItem('attributes', JSON.stringify(saved_conversations_attributes));
+    //     }
 
-        // TEST BUTTONS
-        // message['attributes'] = {
-        //   attachment: {
-        //     type: 'template',
-        //     buttons: [
-                // {
-                //     type: 'action',
-                //     value: 'EXECUTE AN ACTION',
-                //     action: 'my-action-name',
-                //     show_reply: true
-                // },
-                // {
-                //   type: "url",
-                //   value: "SELF",
-                //   link: "http://www.tiledesk.com",
-                //   target: "self"
-                // },
-                // {
-                //   type: "url",
-                //   value: "PARENT",
-                //   link: "http://www.tiledesk.com",
-                //   target: "parent"
-                // },
-                // {
-                //   type: "url",
-                //   value: "BLANK",
-                //   link: "http://www.ietf.org",
-                //   target: "blank"
-                // }
-                // {
-                //   type: "text",
-                //   value: "REPLY ONE"
-                // },
-                // {
-                //     type: "text",
-                //     value: "REPLY TWO"
-                // }
-        //     ]
-        //   }
-        // };
-        // messageText = '😀';
-        const emoticon = that.checkIsEmoticon(messageText);
-        // end SPONZIELLO PATCH
-        const msg = new MessageModel(
-          childSnapshot.key,
-          message['language'],
-          message['recipient'],
-          message['recipient_fullname'],
-          message['sender'],
-          message['sender_fullname'],
-          message['status'],
-          message['metadata'],
-          messageText,
-          message['timestamp'],
-          dateSendingMessage,
-          message['type'],
-          message['attributes'],
-          message['channel_type'],
-          message['progectId'],
-          emoticon
-        );
-        msg.sender_urlImage = that.getUrlImgProfile(message['sender']);
-        that.triggerGetImageUrlThumb(msg);
-        if (that.messages.indexOf(message) === -1) {
-          that.addMessage(msg);
-        }
+    //     // TEST BUTTONS
+    //     // message['attributes'] = {
+    //     //   attachment: {
+    //     //     type: 'template',
+    //     //     buttons: [
+    //     //         {
+    //     //             type: 'action',
+    //     //             value: 'EXECUTE AN ACTION',
+    //     //             action: 'my-action-name',
+    //     //             show_reply: true
+    //     //         },
+    //     //         {
+    //     //           type: "url",
+    //     //           value: "SITE 2",
+    //     //           link: "http://www.ietf.org",
+    //     //           target: "external"
+    //     //         },
+    //     //         {
+    //     //           type: "url",
+    //     //           value: "SITE 1",
+    //     //           link: "http://www.tiledesk.com",
+    //     //           target: "self"
+    //     //         },
+    //     //         {
+    //     //           type: "text",
+    //     //           value: "REPLY ONE"
+    //     //         },
+    //     //         {
+    //     //             type: "text",
+    //     //             value: "REPLY TWO"
+    //     //         }
+    //     //     ]
+    //     //   }
+    //     // };
+
+    //     // end SPONZIELLO PATCH
+    //     const msg = new MessageModel(
+    //       childSnapshot.key,
+    //       // message['language'],
+    //       message['recipient'],
+    //       message['recipient_fullname'],
+    //       message['sender'],
+    //       message['sender_fullname'],
+    //       message['status'],
+    //       message['metadata'],
+    //       messageText,
+    //       // message['timestamp'],
+    //       // dateSendingMessage,
+    //       message['type'],
+    //       message['attributes'],
+    //       message['channel_type'],
+    //       message['progectId']
+    //     );
+    //     // msg.sender_urlImage = that.getUrlImgProfile(message['sender']);
+    //     that.triggerGetImageUrlThumb(msg);
+    //     if (that.messages.indexOf(message) === -1) {
+    //       that.addMessage(msg);
+    //     }
+    //   }
+    // });
+
+    const childSnapshotKey = '000000';
+    const message = {
+      "text": "messageText",
+      "timestamp": "2020-10-02",
+      "attributes": {
+        "updateUserFullname": "TestFullName",
+        "updateUserEmail": "testEmail@gmail.com",
+      },
+      "recipient": '12345', //uid
+      "recipient_fullname": 'TestRecipientFullName',
+      "sender": '12346',
+      "sender_fullname": 'TestSenderFullName',
+      "status": '200',
+      "metadata": '',
+      "type": "text",
+      "channel_type": this.g.channelType,
+      "progectId": this.g.projectid,
+      
+      "sender_urlImage": '',
+      "uid": '12345',
+      "projectid": this.g.projectid,
+      "asFirebaseMessage": new function(){},
+    }; // connectar a un json del server (no se si puedo porque asFirebaseMessage pide un Object)
+    // console.log('1 passo -----', message);
+    const video_pattern = /^(tdvideo:.*)/mg;
+    const key = 'tdvideo:';
+    // const messageText = that.splitMessageForKey(key, video_pattern, message.text);
+    // const messageText = message.text;
+    let messageText = that.convertMessage(message.text);
+    messageText = replaceBr(messageText); // message['text']);
+
+    if (true || that.checkMessage(message)) {
+      // imposto il giorno del messaggio
+      // const timestamp =  firebase.database.ServerValue.TIMESTAMP;
+      const dateSendingMessage = setHeaderDate(message['timestamp']);
+      // SPONZIELLO PATCH // forces update of userFullname from remote command
+      // console.log("Sponziello patch")
+      // console.log("saved_conversations_attributes_STRING: " , saved_conversations_attributes_STRING)
+
+      const saved_conversations_attributes_STRING = that.storageService.getItem('attributes');
+      let saved_conversations_attributes = {};
+      if (saved_conversations_attributes_STRING != null) {
+        saved_conversations_attributes = JSON.parse(saved_conversations_attributes_STRING);
       }
-    });
-  }
+      // console.log("saved_conversations_attributes: " , saved_conversations_attributes)
+      if (message['attributes'] && message['attributes']['updateUserFullname']) {
+        // console.log("message->updateUserFullname! " , message['attributes']['updateUserFullname'])
+        const userFullname = message['attributes']['updateUserFullname'];
+        saved_conversations_attributes['userFullname'] = userFullname;
+        // console.log("new saved_conversations_attributes: " , saved_conversations_attributes)
+        that.g.userFullname = userFullname;
+        that.storageService.setItem('attributes', JSON.stringify(saved_conversations_attributes));
+      }
+      if (message['attributes'] && message['attributes']['updateUserEmail']) {
+        const userEmail = message['attributes']['updateUserEmail'];
+        saved_conversations_attributes['userEmail'] = userEmail;
+        that.g.userEmail = userEmail;
+        that.storageService.setItem('attributes', JSON.stringify(saved_conversations_attributes));
+      }
 
+      // TEST BUTTONS
+      // message['attributes'] = {
+      //   attachment: {
+      //     type: 'template',
+      //     buttons: [
+      //         {
+      //             type: 'action',
+      //             value: 'EXECUTE AN ACTION',
+      //             action: 'my-action-name',
+      //             show_reply: true
+      //         },
+      //         {
+      //           type: "url",
+      //           value: "SITE 2",
+      //           link: "http://www.ietf.org",
+      //           target: "external"
+      //         },
+      //         {
+      //           type: "url",
+      //           value: "SITE 1",
+      //           link: "http://www.tiledesk.com",
+      //           target: "self"
+      //         },
+      //         {
+      //           type: "text",
+      //           value: "REPLY ONE"
+      //         },
+      //         {
+      //             type: "text",
+      //             value: "REPLY TWO"
+      //         }
+      //     ]
+      //   }
+      // };
 
-  checkIsEmoticon(message: string) {
-    this.g.wdLog(['> message.length :' + message.length]);
-    if (message.length > 2) {
-      return false;
+      // end SPONZIELLO PATCH
+      const msg = new MessageModel(
+        childSnapshotKey,
+        // message['language'],
+        message['recipient'],
+        message['recipient_fullname'],
+        message['sender'],
+        message['sender_fullname'],
+        message['status'],
+        message['metadata'],
+        messageText,
+        // message['timestamp'],
+        // dateSendingMessage,
+        message['type'],
+        message['attributes'],
+        message['channel_type'],
+        message['progectId']
+      );
+      // msg.sender_urlImage = that.getUrlImgProfile(message['sender']);
+      that.triggerGetImageUrlThumb(msg);
+      if (that.messages.indexOf(message) === -1) {
+        that.addMessage(msg);
+        that.addMessage(msg);
+        that.addMessage(msg);
+        that.addMessage(msg);
+      }
     }
-    let fistChar = '';
-    try {
-      fistChar = message.trim(); // .charAt(0);
-      this.g.wdLog(['> fistChar :' + fistChar]);
-    } catch (e) {
-      this.g.wdLog(['> Error :' + e]);
-      return false;
-    }
-    return isEmoji(fistChar);
   }
 
   /**
@@ -451,7 +548,7 @@ export class MessagingService {
       // tslint:disable-next-line:max-line-length
       const urlNodeMessagesUpdate = '/apps/' + this.tenant + '/users/' + this.senderId + '/messages/' + conversationWith + '/' + item.key;
       this.g.wdLog(['AGGIORNO STATO MESSAGGIO', urlNodeMessagesUpdate]);
-      firebase.database().ref(urlNodeMessagesUpdate).update({ status: MSG_STATUS_RECEIVED });
+      // firebase.database().ref(urlNodeMessagesUpdate).update({ status: MSG_STATUS_RECEIVED });
     }
   }
 }
@@ -463,9 +560,9 @@ export class MessagingService {
     this.conversationWith = conversationWith;
     const urlNodeFirebase = '/apps/' + tenant + '/typings/' + conversationWith;
     this.g.wdLog(['checkWritingMessages *****', urlNodeFirebase]);
-    const firebaseMessages = firebase.database().ref(urlNodeFirebase);
-    const messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(1);
-    return messagesRef;
+    // const firebaseMessages = firebase.database().ref(urlNodeFirebase);
+    // const messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(1);
+    // return messagesRef;
   }
 
   /**
@@ -562,12 +659,12 @@ export class MessagingService {
     const that = this;
     // const now: Date = new Date();
     // const localTimestamp = now.valueOf();
-    const timestamp = firebase.database.ServerValue.TIMESTAMP;
-    const language = navigator.language;
-    const dateSendingMessage = setHeaderDate(timestamp);
+    // const timestamp = firebase.database.ServerValue.TIMESTAMP;
+    // const language = navigator.language;
+    // const dateSendingMessage = setHeaderDate(timestamp);
     const message = new MessageModel(
       '',
-      language,
+      // language,
       conversationWith,
       recipientFullname,
       senderId,
@@ -575,8 +672,8 @@ export class MessagingService {
       '',
       metadata,
       msg,
-      timestamp,
-      dateSendingMessage,
+      // timestamp,
+      // dateSendingMessage,
       type,
       attributes,
       channel_type,
@@ -584,7 +681,7 @@ export class MessagingService {
     );
     // this.messages.push(message);
     const __urlMessages = '/apps/' + tenant + '/users/' + senderId + '/messages/';
-    const conversationRef = firebase.database().ref(__urlMessages + conversationWith);
+    // const conversationRef = firebase.database().ref(__urlMessages + conversationWith);
     // console.log('>>> url messaggio: ', __urlMessages + conversationWith);
     // console.log('message: ', message);
 
@@ -600,26 +697,26 @@ export class MessagingService {
     //   }
 
 
-    const messageRef = conversationRef.push();
-    const key = messageRef.key;
-    message.uid = key;
-     that.g.wdLog(['messageRef: ', messageRef]);
-    const messageForFirebase = message.asFirebaseMessage();
-    // console.log("messageForFirebase ", messageForFirebase)
-     that.g.wdLog(['messageForFirebase: ', messageForFirebase]);
-    messageRef.set(messageForFirebase, function (error) {
+    // const messageRef = conversationRef.push();
+    // const key = messageRef.key;
+    // message.uid = key;
+    //  that.g.wdLog(['messageRef: ', messageRef]);
+    // const messageForFirebase = message.asFirebaseMessage();
+    // // console.log("messageForFirebase ", messageForFirebase)
+    //  that.g.wdLog(['messageForFirebase: ', messageForFirebase]);
+    // messageRef.set(messageForFirebase, function (error) {
       // Callback comes here
-      if (error) {
-        // cambio lo stato in rosso: invio nn riuscito!!!
-        message.status = '-100';
-         that.g.wdLog(['ERRORE', error]);
-      } else {
-        // that.checkWritingMessages();
-        message.status = '150';
-        that.g.wdLog(['OK MSG INVIATO CON SUCCESSO AL SERVER', message]);
-      }
-      //   that.g.wdLog(['****** changed *****', that.messages);
-    });
+    //   if (error) {
+    //     // cambio lo stato in rosso: invio nn riuscito!!!
+    //     message.status = '-100';
+    //      that.g.wdLog(['ERRORE', error]);
+    //   } else {
+    //     // that.checkWritingMessages();
+    //     message.status = '150';
+    //     that.g.wdLog(['OK MSG INVIATO CON SUCCESSO AL SERVER', message]);
+    //   }
+    //   //   that.g.wdLog(['****** changed *****', that.messages);
+    // });
 
 
 
@@ -645,13 +742,13 @@ export class MessagingService {
    */
   private checkRemoveConversation(conversationWith) {
     const that = this;
-    this.conversationsRef = firebase.database().ref(this.urlConversation);
-    this.conversationsRef.on('child_removed', function (snap) {
-       that.g.wdLog(['child_removed ***********************', snap.key, snap.val()]);
-      if (snap.key === conversationWith) {
-        that.closeConversation();
-      }
-    });
+    // this.conversationsRef = firebase.database().ref(this.urlConversation);
+    // this.conversationsRef.on('child_removed', function (snap) {
+    //    that.g.wdLog(['child_removed ***********************', snap.key, snap.val()]);
+    //   if (snap.key === conversationWith) {
+    //     that.closeConversation();
+    //   }
+    // });
   }
 
   /**
@@ -667,13 +764,17 @@ export class MessagingService {
    *
    */
   generateUidConversation(uid): string {
-    this.firebaseMessagesKey = firebase.database().ref(this.urlMessages);
+    // this.firebaseMessagesKey = firebase.database().ref(this.urlMessages);
     // creo il nodo conversazione generando un custom uid
-    const newMessageRef = this.firebaseMessagesKey.push();
-    const key = UID_SUPPORT_GROUP_MESSAGES + newMessageRef.key;
+    // const newMessageRef = this.firebaseMessagesKey.push();
+    // const key = UID_SUPPORT_GROUP_MESSAGES + newMessageRef.key;
     // sessionStorage.setItem(uid, key);
-    this.g.wdLog(['setItem ************** UID:', uid, ' KWY: ', key]);
-    // this.storageService.setItem(uid, key);
+    // this.g.wdLog(['setItem ************** UID:', uid, ' KWY: ', key]);
+    // // this.storageService.setItem(uid, key);
+    // this.conversationWith = key;
+    // return key;
+    const key = '12345'
+    sessionStorage.setItem(uid, key);
     this.conversationWith = key;
     return key;
   }
@@ -705,8 +806,8 @@ export class MessagingService {
     const message = {
       metadata: metadata
     };
-    const firebaseMessages = firebase.database().ref(this.urlMessages + uid);
-    firebaseMessages.set(message);
+    // const firebaseMessages = firebase.database().ref(this.urlMessages + uid);
+    // firebaseMessages.set(message);
   }
 
 
@@ -727,12 +828,12 @@ export class MessagingService {
   getWritingMessages() {
     const that = this;
     // console.log('------------- getWritingMessages -----------', that.urlNodeTypings);
-    const ref = firebase.database().ref(that.urlNodeTypings).orderByChild('timestamp').limitToLast(100);
-    ref.on('child_changed', function(childSnapshot) {
-        // that.events.publish('isTypings', childSnapshot);
-        // console.log('------------- getWritingMessages child_changed -----------');
-        that.obsTyping.next(childSnapshot);
-    });
+    // const ref = firebase.database().ref(that.urlNodeTypings).orderByChild('timestamp').limitToLast(100);
+    // ref.on('child_changed', function(childSnapshot) {
+    //     // that.events.publish('isTypings', childSnapshot);
+    //     // console.log('------------- getWritingMessages child_changed -----------');
+    //     that.obsTyping.next(childSnapshot);
+    // });
   }
 
   /**
@@ -746,18 +847,18 @@ export class MessagingService {
         // console.log('GRUPPO', readUrlNodeTypings);
       }
       // console.log('setWritingMessages:', readUrlNodeTypings);
-      const timestamp =  firebase.database.ServerValue.TIMESTAMP;
-      const precence = {
-        'timestamp': timestamp,
-        'message': str
-      };
-      firebase.database().ref(readUrlNodeTypings).set(precence, function( error ) {
-        if (error) {
-          console.log('ERRORE', error);
-        } else {
-          // console.log('OK update typing');
-        }
-      });
+      // const timestamp =  firebase.database.ServerValue.TIMESTAMP;
+      // const precence = {
+      //   'timestamp': timestamp,
+      //   'message': str
+      // };
+      // firebase.database().ref(readUrlNodeTypings).set(precence, function( error ) {
+      //   if (error) {
+      //     console.log('ERRORE', error);
+      //   } else {
+      //     // console.log('OK update typing');
+      //   }
+      // });
     }, 500);
   }
   // END TYPING FUNCTIONS
@@ -769,7 +870,7 @@ export class MessagingService {
    */
   unsubscribeAllReferences() {
     this.g.wdLog(['--------> messagesRef.off']);
-    this.messagesRef.off();
+    // this.messagesRef.off();
     // this.conversationsRef.off('child_removed');
   }
 

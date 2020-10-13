@@ -1,22 +1,5 @@
 # chat21-web-widget ver 3.0
 
-### 4.0.77
-- new: changed css of the message with a single emoticon
-- new: open widget on the last conversation
-
-### 4.0.76
-- new: added target self, parent, blank in button message
-
-### 4.0.75
-- new: added emoticon as the first character in the callout field
-
-### 4.0.74
-- bug-fix: disabled auto zoom in input 'Text' - Safari on iPhone 
-- change: enabled callout on mobile device
-
-### 4.0.73
-- bug-fix: resized image (sent in message) with attribute size
-
 ### 4.0.72
 - new: send message on action button
 

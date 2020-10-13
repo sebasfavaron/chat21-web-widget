@@ -28,7 +28,7 @@ export class Globals {
   POWERED_BY = '<a tabindex="-1" target="_blank" href="http://www.tiledesk.com/">Powered by <b>TileDesk</b></a>';
 
   DEFAULT_LOGO_CHAT = '/assets/images/tiledesk_logo_white_small.png';
-  WIDGET_TITLE = 'Tiledesk';
+  WIDGET_TITLE = 'Balanz';
 
   // private parameters = {};
   // private default_settings;
@@ -64,7 +64,7 @@ export class Globals {
   firebaseToken: string;
   lang: string;
   conversationsBadge: number;
-  activeConversation: ConversationModel;
+  activeConversation: string;
   public currentConversationComponent: ConversationComponent;
 
   isOpenStartRating: boolean;
@@ -374,7 +374,7 @@ export class Globals {
     // this.parameters['conversationsBadge'] = 0;
     // this.parameters.push({'conversationsBadge': 0});
 
-    this.activeConversation = null;
+    this.activeConversation = '';
     // this.parameters['activeConversation'] = '';
     // this.parameters.push({'activeConversation': ''});
 

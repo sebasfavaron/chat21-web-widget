@@ -160,28 +160,34 @@ export class ListConversationsComponent implements OnInit, AfterViewInit, OnDest
   showWaitingTime() {
     const that = this;
     const projectid = this.g.projectid;
-    this.waitingService.getCurrent(projectid)
-    .subscribe(response => {
-        that.g.wdLog(['response waiting', response]);
-        // console.log('response waiting ::::', response);
-       if (response && response.length > 0 && response[0].waiting_time_avg) {
-        const wt = response[0].waiting_time_avg;
 
-        that.waitingTime = wt;
-        that.g.wdLog([' that.waitingTime',  that.waitingTime]);
-        // console.log('that.waitingTime', that.waitingTime);
+    const wt = 20*1000; // average ms to respond
+    that.waitingTime = wt;
+    const lang = that.translatorService.getLanguage();
+    that.humanWaitingTime = this.humanizer.humanize(wt, {language: lang});
 
-        const lang = that.translatorService.getLanguage();
-        // console.log('lang', lang);
-        that.humanWaitingTime = this.humanizer.humanize(wt, {language: lang});
-        // console.log('xxx', this.humanizer.humanize(wt));
-        // 'The team typically replies in ' + moment.duration(response[0].waiting_time_avg).format();
-       }
-      //  else {
-      //   that.waitingTimeMessage = 'waiting_time_not_found';
-      //   // that.waitingTimeMessage = 'Will reply as soon as they can';
-      //  }
-    });
+    // this.waitingService.getCurrent(projectid)
+    // .subscribe(response => {
+    //     that.g.wdLog(['response waiting', response]);
+    //     // console.log('response waiting ::::', response);
+    //    if (response && response.length > 0 && response[0].waiting_time_avg) {
+    //     const wt = response[0].waiting_time_avg;
+
+    //     that.waitingTime = wt;
+    //     that.g.wdLog([' that.waitingTime',  that.waitingTime]);
+    //     // console.log('that.waitingTime', that.waitingTime);
+
+    //     const lang = that.translatorService.getLanguage();
+    //     // console.log('lang', lang);
+    //     that.humanWaitingTime = this.humanizer.humanize(wt, {language: lang});
+    //     // console.log('xxx', this.humanizer.humanize(wt));
+    //     // 'The team typically replies in ' + moment.duration(response[0].waiting_time_avg).format();
+    //    }
+    //   //  else {
+    //   //   that.waitingTimeMessage = 'waiting_time_not_found';
+    //   //   // that.waitingTimeMessage = 'Will reply as soon as they can';
+    //   //  }
+    // });
 }
 
 checkShowAllConversation() {

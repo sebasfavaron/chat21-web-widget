@@ -95,13 +95,6 @@
     height: 70px;
     border-radius: 35px;
 
-    .eye-catcher_row {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-    }
-    
-
     &.c21-align-left{
         margin: 16px 14px 15px 16px;
         padding-left: 70px;
@@ -150,9 +143,8 @@
         }
         .ec_right {
             overflow: hidden;
-            width: 100%;
+            width: calc(100% - 115px);
             height: 100%;
-            max-width: calc(100% - 115px);
             padding: 4px 0px;
             vertical-align: middle;
             display: inline-table;
@@ -229,9 +221,3 @@
     font-size: 26px;
 }
 /* ./ end EYE-CATCHER CARD & EYE-CATCHER CARD  */
-
-@media (max-width: 451px) {
-    .eye-catcher-card {
-        max-width: calc(100% - 90px);
-    }
-}

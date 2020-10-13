@@ -37,7 +37,6 @@ import { GlobalSettingsService } from './providers/global-settings.service';
 import { SettingsSaverService } from './providers/settings-saver.service';
 import { StorageService } from './providers/storage.service';
 import { ChatPresenceHandlerService } from './providers/chat-presence-handler.service';
-import { AuthService } from './providers/auth.service';
 import { MessagingService } from './providers/messaging.service';
 import { ConversationsService } from './providers/conversations.service';
 import { UploadService } from './providers/upload.service';
@@ -128,7 +127,6 @@ const appInitializerFn = (appConfig: AppConfigService) => {
       multi: true,
       deps: [AppConfigService]
     },
-    AuthService,
     MessagingService,
     Globals,
     GlobalSettingsService,

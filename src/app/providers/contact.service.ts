@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 // firebase
-import * as firebase from 'firebase/app';
-import 'firebase/database';
-import 'firebase/storage';
+// import * as firebase from 'firebase/app';
+// import 'firebase/database';
+// import 'firebase/storage';
 
 // models
 import { ContactModel } from '../../models/contact';
@@ -33,11 +33,11 @@ export class ContactService {
     this.userId = userId;
     // recupero elenco partecipanti alla chat
     this.urlNodeFirebaseGroup = '/apps/' + this.tenant + '/users/' + this.userId + '/groups/' + this.conversationId + '/members';
-    const firebaseGroup = firebase.database().ref(this.urlNodeFirebaseGroup)
-    .once('value').then(function(snapshot) {
-      //  wdLog('snapshot.val() *****', snapshot);
-      that.getProfileUser(snapshot);
-    });
+    // const firebaseGroup = firebase.database().ref(this.urlNodeFirebaseGroup)
+    // .once('value').then(function(snapshot) {
+    //   //  wdLog('snapshot.val() *****', snapshot);
+    //   that.getProfileUser(snapshot);
+    // });
   }
 
   getProfileUser(snapshot) {
@@ -46,14 +46,14 @@ export class ContactService {
       function(childSnapshot) {
         //  wdLog('arrayUser *****', childSnapshot.key);
         that.urlNodeFirebaseContact = '/apps/' + that.tenant + '/contacts/' + childSnapshot.key;
-        const firebaseContact = firebase.database().ref(that.urlNodeFirebaseContact)
-        .once('value').then(function(snapshotContact) {
-          //  wdLog('contact.val() *****', snapshotContact.val());
-          if (snapshotContact.val()) {
-            const contact: ContactModel = snapshotContact.val();
-            that.listContacts.push(contact);
-          }
-        });
+        // const firebaseContact = firebase.database().ref(that.urlNodeFirebaseContact)
+        // .once('value').then(function(snapshotContact) {
+        //   //  wdLog('contact.val() *****', snapshotContact.val());
+        //   if (snapshotContact.val()) {
+        //     const contact: ContactModel = snapshotContact.val();
+        //     that.listContacts.push(contact);
+        //   }
+        // });
       }
     );
     //  wdLog('listContacts *****', this.listContacts);
@@ -82,7 +82,7 @@ export class ContactService {
       } else {
         urlImagesNodeFirebase = '/profiles/' + uidContact + '/photo.jpg';
       }
-      return firebase.storage().ref().child(urlImagesNodeFirebase).getDownloadURL();
+      // return firebase.storage().ref().child(urlImagesNodeFirebase).getDownloadURL();
     }
   }
 

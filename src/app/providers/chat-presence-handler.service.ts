@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
 // firebase
-import * as firebase from 'firebase/app';
-import 'firebase/database';
+// import * as firebase from 'firebase/app';
+// import 'firebase/database';
 
 import { Globals } from '../utils/globals';
 
@@ -78,8 +78,9 @@ export class ChatPresenceHandlerService {
    */
   lastOnlineRefForUser(userid) {
     const lastOnlineRefURL = this.urlNodeFirebase + '/presence/' + userid + '/lastOnline';
-    const lastOnlineRef = firebase.database().ref().child(lastOnlineRefURL);
-    return lastOnlineRef;
+    return;
+    // const lastOnlineRef = firebase.database().ref().child(lastOnlineRefURL);
+    // return lastOnlineRef;
   }
 
   /**
@@ -90,8 +91,9 @@ export class ChatPresenceHandlerService {
   onlineRefForUser(userid) {
     const myConnectionsRefURL = this.urlNodeFirebase + '/presence/' + userid + '/connections';
     this.g.wdLog(['onlineRefForUser *****', myConnectionsRefURL]);
-    const connectionsRef = firebase.database().ref().child(myConnectionsRefURL);
-    return connectionsRef;
+    return;
+    // const connectionsRef = firebase.database().ref().child(myConnectionsRefURL);
+    // return connectionsRef;
   }
 
   /**
@@ -112,39 +114,39 @@ export class ChatPresenceHandlerService {
     this.myConnectionsRef = this.onlineRefForUser(userid);
     this.lastOnlineRef = this.lastOnlineRefForUser(userid);
     const connectedRefURL = '/.info/connected';
-    const conn = firebase.database().ref(connectedRefURL);
+    // const conn = firebase.database().ref(connectedRefURL);
 
-    conn.on('value', function(dataSnapshot) {
-      if (dataSnapshot.val() === true) {
-        that.g.wdLog(['setupMyPresence: val: ' + dataSnapshot.val() + that.myConnectionsRef]);
-        if (that.myConnectionsRef) {
-          // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
-          const con = that.myConnectionsRef.push();
+    // conn.on('value', function(dataSnapshot) {
+    //   if (dataSnapshot.val() === true) {
+    //     that.g.wdLog(['setupMyPresence: val: ' + dataSnapshot.val() + that.myConnectionsRef]);
+    //     if (that.myConnectionsRef) {
+    //       // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+    //       const con = that.myConnectionsRef.push();
 
-          // When I disconnect, remove this device
-          con.onDisconnect().remove(function(err) {
-            if (err) {
-              console.error('could not establish onDisconnect event', err);
-            }
-          });
+    //       // When I disconnect, remove this device
+    //       con.onDisconnect().remove(function(err) {
+    //         if (err) {
+    //           console.error('could not establish onDisconnect event', err);
+    //         }
+    //       });
 
-          // Add this device to my connections list
-          // this value could contain info about the device or a timestamp too
-          con.set(true);
+    //       // Add this device to my connections list
+    //       // this value could contain info about the device or a timestamp too
+    //       con.set(true);
 
-          // When I disconnect, update the last time I was seen online
-          const now: Date = new Date();
-          const timestamp = now.valueOf();
-          that.lastOnlineRef.onDisconnect().set(timestamp, function(err) {
-            if (err) {
-              console.error('could not establish onDisconnect event', err);
-            }
-          });
-        } else {
-          that.g.wdLog(['This is an error. self.deviceConnectionRef already set. Cannot be set again.']);
-        }
-      }
-    });
+    //       // When I disconnect, update the last time I was seen online
+    //       const now: Date = new Date();
+    //       const timestamp = now.valueOf();
+    //       that.lastOnlineRef.onDisconnect().set(timestamp, function(err) {
+    //         if (err) {
+    //           console.error('could not establish onDisconnect event', err);
+    //         }
+    //       });
+    //     } else {
+    //       that.g.wdLog(['This is an error. self.deviceConnectionRef already set. Cannot be set again.']);
+    //     }
+    //   }
+    // });
   }
 
   /**

@@ -33,7 +33,7 @@ function loadIframe(tiledeskScriptBaseLocation) {
     srcTileDesk += '<head>';
     srcTileDesk += '<meta charset="utf-8">';
     srcTileDesk += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />';
-    srcTileDesk += '<title>Tilechat Widget</title>';
+    srcTileDesk += '<title>Balanz Widget</title>';
     srcTileDesk += '<base href="./">';
     srcTileDesk += '<link rel="icon" type="image/x-icon" href="favicon.ico">';
     srcTileDesk += '</head>';

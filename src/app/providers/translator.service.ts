@@ -32,7 +32,7 @@ export class TranslatorService {
 
     let windowContext = window;
     if (window.frameElement && window.frameElement.getAttribute('tiledesk_context') === 'parent') {
-      windowContext = window.parent;
+      windowContext = (window as any).parent;
     }
 
     if (windowContext['tiledesk']) {
@@ -67,9 +67,10 @@ export class TranslatorService {
 
     // console.log(`»»»» getTranslationFileUrl `, this.remoteTranslationsUrl);
     if (environment.loadRemoteTranslations) {
-      return this.remoteTranslationsUrl + this.g.projectid + '/labels/' + browserLang.toUpperCase();
+      return /* this.baseLocation + */`assets/i18n/${browserLang}.json`;
+      //return this.remoteTranslationsUrl /* + this.g.projectid */ + 'labels/' + browserLang.toUpperCase();
     } else {
-      return this.baseLocation + `/assets/i18n/${browserLang}.json`;
+      return /* this.baseLocation + */`assets/i18n/${browserLang}.json`;
     }
   }
 
@@ -82,12 +83,13 @@ export class TranslatorService {
     const defaultLanguage = 'en';
     this._translate.setDefaultLang(defaultLanguage);
     // Detect user language.
-    let browserLang = this._translate.getBrowserLang();
-    if (this.g.lang && this.g.lang !== '') {
-      browserLang = this.g.lang;
-    } else {
-      this.g.lang = browserLang;
-    }
+    let browserLang = 'en';//this._translate.getBrowserLang();
+    // if (this.g.lang && this.g.lang !== '') {
+    //   browserLang = this.g.lang;
+    // } else {
+    //   this.g.lang = browserLang;
+    // }
+    this.g.lang = browserLang
 
 
 
