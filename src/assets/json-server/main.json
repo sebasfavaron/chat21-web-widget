@@ -1,0 +1,22 @@
+{
+    "widgets": {
+        "project": {
+            "id": 1,
+            "activeOperatingHours": 5,
+            "channels": [1],
+            "name": "TestName",
+            "createdAt": "2017-01-01",
+            "createdBy": "TestCreatedBy",
+            "isActiveSubscription": true,
+            "profile": "TestProfile",
+            "agents": "",
+            "trialDays": 9999,
+            "type": "Active",
+            "status": "Active",
+            "trialDaysLeft": 8888,
+            "trialExpired": false,
+            "updatedAt": "2017-01-02",
+            "versions": 1
+        }
+    }
+}
