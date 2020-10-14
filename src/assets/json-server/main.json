@@ -18,5 +18,29 @@
             "updatedAt": "2017-01-02",
             "versions": 1
         }
+    },
+    "conversations": {
+        "user1": {
+            "received": [
+                {
+                "text": "Hi!",
+                "timestamp": "2020-10-14T10:00:00"
+                },
+                {
+                    "text": "Hmm pretty great I'd say",
+                    "timestamp": "2020-10-14T10:00:33"
+                }
+            ],
+            "sent": [
+                {
+                "text": "Well hello there",
+                "timestamp": "2020-10-14T10:00:10"
+                },
+                {
+                "text": "How's life?",
+                "timestamp": "2020-10-14T10:00:15"
+                }
+            ]
+        }
     }
 }
